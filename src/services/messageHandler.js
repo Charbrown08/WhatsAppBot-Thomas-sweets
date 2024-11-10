@@ -1,6 +1,10 @@
 import whatsappService from './whatsappService.js'
 
 class MessageHandler {
+  constructor() {
+    this.reservationState = {}
+  }
+
   async handleIncomingMessage(message, senderInfo) {
     if (message?.type === 'text') {
       const incomingMessage = message.text.body.toLowerCase().trim()
@@ -132,6 +136,47 @@ class MessageHandler {
     }
 
     await whatsappService.sendMediaMessage(to, type, mediaUrl, caption)
+  }
+
+  async handlerReservationFlow(to, message) {
+    const state = this.reservationState[to]
+    let response
+
+    switch (state.step) {
+      case 'flavor':
+        state.flavor = message
+        state.step = 'cakeFlavor'
+        response = '¿Que sabor te encanta?'
+        break
+      case 'cakeFlavor':
+        state.cakeFlavor = message
+        state.step = 'cakeSize'
+        response = '¿Que tamaño te gustaria?'
+        break
+      case 'cakeSize':
+        state.cakeSize = message
+        state.step = 'cakeDueDate'
+        response = '¿Que fecha te gustaria?'
+        break
+      case 'cakeDueDate':
+        state.cakeDueDate = message
+        state.step = 'cakeDueTime'
+        response = '¿Que hora te gustaria?'
+        break
+      case 'cakeDueTime':
+        state.cakeDueTime = message
+        state.step = 'cakeMotif'
+        response = '¿Que motivo tiene la torta?'
+        break
+      case 'cakeMotif':
+        state.cakeMotif = message
+        state.step = 'deliveryAddr'
+        response = '¿Cual es tu direccion?'
+        break
+      case 'deliveryAddr':
+        state.deliveryAddr = message
+        response = 'Gracias por tu reserva, nos pondremos en contacto contigo'
+    }
   }
 }
 
