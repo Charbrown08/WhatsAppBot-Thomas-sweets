@@ -2,7 +2,7 @@ import axios from 'axios'
 import config from '../config/env.js'
 
 class WhatsAppService {
-  async sendMessage(to, body, messageId) {
+  async sendMessage(to, body) {
     try {
       await axios({
         method: 'POST',
