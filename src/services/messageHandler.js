@@ -15,6 +15,8 @@ class MessageHandler {
         await this.sendWelcomeMenu(message.from)
       } else if (mediaFile.includes(incomingMessage)) {
         await this.sendMedia(message.from, incomingMessage)
+      } else if (this.reservationState[message.from]) {
+        await this.handlerReservationFlow(message.from, incomingMessage)
       } else {
         const response = `Echo: ${message.text.body}`
         await whatsappService.sendMessage(message.from, response, message.id)
@@ -88,7 +90,9 @@ class MessageHandler {
 
     switch (option) {
       case 'agendar':
-        response = 'Agendar sweets'
+        this.reservationState[to] = { step: 'nombre' }
+        response =
+          'Por Favor, ¿Nos puedes decir el nombre de quien recibirá esta dulce sorpresa? 😊'
         break
       case 'ver':
         response = 'Ver sweets'
@@ -143,40 +147,71 @@ class MessageHandler {
     let response
 
     switch (state.step) {
-      case 'flavor':
-        state.flavor = message
-        state.step = 'cakeFlavor'
-        response = '¿Que sabor te encanta?'
+      case 'nombre':
+        state.nombre = message
+        state.step = 'thCelular'
+        response = '😊 ¿Cuál es el número de quien recibirá el pedido? 📞'
         break
-      case 'cakeFlavor':
-        state.cakeFlavor = message
-        state.step = 'cakeSize'
-        response = '¿Que tamaño te gustaria?'
+
+      case 'thCelular':
+        state.thCelular = message
+        state.step = 'thFecha'
+        response = '¿Qué fecha prefieres para la entrega? 🗓️ (DD/MM/AAAA)'
         break
-      case 'cakeSize':
-        state.cakeSize = message
-        state.step = 'cakeDueDate'
-        response = '¿Que fecha te gustaria?'
+
+      case 'thFecha':
+        state.thFecha = message
+        state.step = 'thDireccion'
+        response = '¿Dónde entregaremos esta sorpresa? 🏡'
         break
-      case 'cakeDueDate':
-        state.cakeDueDate = message
-        state.step = 'cakeDueTime'
-        response = '¿Que hora te gustaria?'
+
+      case 'thDireccion':
+        state.thDireccion = message
+        state.step = 'thTamano'
+        response = '¿Qué tamaño prefieres? 🍰 (MINI, 3/4 o MEDIA)'
         break
-      case 'cakeDueTime':
-        state.cakeDueTime = message
-        state.step = 'cakeMotif'
-        response = '¿Que motivo tiene la torta?'
+
+      case 'thTamano':
+        state.thTamano = message
+        state.step = 'thCantidad'
+        response = '¡Perfecto! ¿Cuántas unidades necesitas?'
         break
-      case 'cakeMotif':
-        state.cakeMotif = message
-        state.step = 'deliveryAddr'
-        response = '¿Cual es tu direccion?'
+
+      case 'thCantidad':
+        state.thCantidad = message
+        state.step = 'thSabor'
+        response =
+          'Elige tu sabor favorito 😋 (chocolate, vainilla, yogurt, zanahoria):'
         break
-      case 'deliveryAddr':
-        state.deliveryAddr = message
-        response = 'Gracias por tu reserva, nos pondremos en contacto contigo'
+
+      case 'thSabor':
+        state.thSabor = message
+        state.step = 'thMotivo'
+        response =
+          '¿Cuál es el motivo de esta sorpresa? (CUMPLEAÑO, BABYSHOWER, AMOR, OTRA)🎈'
+        break
+
+      case 'thMotivo':
+        state.thMotivo = message
+        state.step = 'thHora'
+        response = '¿A qué hora te gustaría recibirlo? ⏰ (Formato militar)'
+        break
+
+      case 'thHora':
+        state.thHora = message
+        state.step = 'thPago'
+        response =
+          '¿Con que metodo de pago deseas cancelar, efectivo o transferencia? 💸 (50% para confirmar)'
+        break
+
+      case 'thPago':
+        state.thPago = message
+        response =
+          '¡Gracias por tu pedido! 🎂 Thomas&Sweets lo tendrá listo muy pronto. 💖'
+        break
     }
+
+    await whatsappService.sendMessage(to, response)
   }
 }
 
