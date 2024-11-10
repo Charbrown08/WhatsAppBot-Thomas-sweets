@@ -7,6 +7,7 @@ class MessageHandler {
 
       if (this.isGreeting(incomingMessage)) {
         await this.sendWelcomeMessage(message.from, message.id, senderInfo)
+        await this.sendWelcomeMenu(message.from)
       } else {
         const response = `Echo: ${message.text.body}`
         await whatsappService.sendMessage(message.from, response, message.id)
@@ -32,11 +33,20 @@ class MessageHandler {
   }
 
   async sendWelcomeMenu(to) {
-    const menuMessage = 'Elige una opcion'
+    const menuMessage = 'Elige una Opción'
     const buttons = [
-      { type: 'reply', reply: { id: 'option_1', title: 'Reservar' } },
-      { type: 'reply', reply: { id: 'option_2', title: 'Ver Catalogo' } },
-      { type: 'reply', reply: { id: 'option_3', title: 'Consultar' } },
+      {
+        type: 'reply',
+        reply: { id: 'option_1', title: 'Agendar sweets' },
+      },
+      {
+        type: 'reply',
+        reply: { id: 'option_2', title: 'Ver sweets' },
+      },
+      {
+        type: 'reply',
+        reply: { id: 'option_3', title: 'Consultar sweets' },
+      },
     ]
 
     await whatsappService.sendInteractiveButtons(to, menuMessage, buttons)
