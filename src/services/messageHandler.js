@@ -58,10 +58,16 @@ class MessageHandler {
         type: 'reply',
         reply: { id: 'option_3', title: 'Consultar' },
       },
-      {
-        type: 'reply',
-        reply: { id: 'option_4', title: 'Ubicar' },
-      },
+
+      /***
+       * ! This button is not working yet
+       * ! It is not sending the message to the server
+       * ! we can only sent 3 buttons consecutives
+       */
+      // {
+      //   type: 'reply',
+      //   reply: { id: 'option_4', title: 'Ubicar' },
+      // },
     ]
 
     await whatsappService.sendInteractiveButtons(to, menuMessage, buttons)
