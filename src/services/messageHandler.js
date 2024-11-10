@@ -4,10 +4,13 @@ class MessageHandler {
   async handleIncomingMessage(message, senderInfo) {
     if (message?.type === 'text') {
       const incomingMessage = message.text.body.toLowerCase().trim()
+      const mediaFile = ['audio', 'video', 'image', 'document']
 
       if (this.isGreeting(incomingMessage)) {
         await this.sendWelcomeMessage(message.from, message.id, senderInfo)
         await this.sendWelcomeMenu(message.from)
+      } else if (mediaFile.includes(incomingMessage)) {
+        await this.sendMedia(message.from, incomingMessage)
       } else {
         const response = `Echo: ${message.text.body}`
         await whatsappService.sendMessage(message.from, response, message.id)
@@ -17,18 +20,21 @@ class MessageHandler {
       const option = message?.interactive?.button_reply?.title
         .toLowerCase()
         .trim()
-      console.log(
-        '🚀 ~ MessageHandler ~ handleIncomingMessage ~ option:',
-        option,
-      )
-
       await this.handleMenuOption(message.from, option)
       await whatsappService.markAsRead(message.id)
     }
   }
 
   isGreeting(message) {
-    const greetings = ['hola', 'hello', 'hi', 'buenas tardes']
+    const greetings = [
+      'hola',
+      'hello',
+      'hi',
+      'buenas tardes',
+      'buenas',
+      'buenas noches',
+      'buenos dias',
+    ]
     return greetings.includes(message)
   }
 
@@ -97,11 +103,33 @@ class MessageHandler {
     await whatsappService.sendMessage(to, response)
   }
 
-  async sendMedia(to) {
-    const mediaUrl =
-      'https://www.nintendo.com/eu/media/images/08_content_images/games_6/nintendo_switch_7/nswitch_mariopartysuperstars/Mario_Party_Superstars_Collection_Mario.png'
-    const caption = 'Bienvenida'
-    const type = 'image'
+  async sendMedia(to, mediaType) {
+    let mediaUrl, caption, type
+
+    switch (mediaType) {
+      case 'audio':
+        mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-audio.aac'
+        caption = 'Aquí tienes un archivo de audio'
+        type = 'audio'
+        break
+      case 'video':
+        mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-video.mp4'
+        caption = 'Aquí tienes un video'
+        type = 'video'
+        break
+      case 'image':
+        mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-imagen.png'
+        caption = 'Aquí tienes una imagen'
+        type = 'image'
+        break
+      case 'document':
+        mediaUrl = 'https://s3.amazonaws.com/gndx.dev/medpet-file.pdf'
+        caption = 'Aquí tienes un archivo PDF'
+        type = 'document'
+        break
+      default:
+        return
+    }
 
     await whatsappService.sendMediaMessage(to, type, mediaUrl, caption)
   }
