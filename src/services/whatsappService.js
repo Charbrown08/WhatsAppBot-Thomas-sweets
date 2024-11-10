@@ -42,6 +42,32 @@ class WhatsAppService {
       console.error('Error marking message as read:', error)
     }
   }
+
+  async sendInteractiveButtons(to, bodyText, buttons) {
+    try {
+      await axios({
+        method: 'POST',
+        url: `https://graph.facebook.com/${config.API_VERSION}/${config.BUSINESS_PHONE}/messages`,
+        headers: {
+          Authorization: `Bearer ${config.API_TOKEN}`,
+        },
+        data: {
+          messaging_product: 'whatsapp',
+          to,
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            body: { text: bodyText },
+            actions: {
+              buttons: buttons,
+            },
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Error sending interactive buttons:', error)
+    }
+  }
 }
 
 export default new WhatsAppService()
