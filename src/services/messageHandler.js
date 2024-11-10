@@ -96,6 +96,15 @@ class MessageHandler {
 
     await whatsappService.sendMessage(to, response)
   }
+
+  async sendMedia(to) {
+    const mediaUrl =
+      'https://www.nintendo.com/eu/media/images/08_content_images/games_6/nintendo_switch_7/nswitch_mariopartysuperstars/Mario_Party_Superstars_Collection_Mario.png'
+    const caption = 'Bienvenida'
+    const type = 'image'
+
+    await whatsappService.sendMediaMessage(to, type, mediaUrl, caption)
+  }
 }
 
 export default new MessageHandler()
