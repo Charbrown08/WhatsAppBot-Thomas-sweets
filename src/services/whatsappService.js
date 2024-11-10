@@ -1,5 +1,6 @@
 import axios from 'axios'
 import config from '../config/env.js'
+
 class WhatsAppService {
   async sendMessage(to, body, messageId) {
     try {
@@ -22,6 +23,7 @@ class WhatsAppService {
       console.error('Error sending message:', error)
     }
   }
+
   async markAsRead(messageId) {
     try {
       await axios({
@@ -41,4 +43,5 @@ class WhatsAppService {
     }
   }
 }
+
 export default new WhatsAppService()

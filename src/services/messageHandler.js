@@ -1,17 +1,3 @@
-// import whatsappService from './whatsappService.js'
-
-// class MessageHandler {
-//   async handleIncomingMessage(message) {
-//     if (message?.type === 'text') {
-//       const response = `Echo: ${message.text.body}`
-//       await whatsappService.sendMessage(message.from, response, message.id)
-//       await whatsappService.markAsRead(message.id)
-//     }
-//   }
-// }
-
-// export default new MessageHandler()
-
 import whatsappService from './whatsappService.js'
 
 class MessageHandler {
@@ -40,7 +26,8 @@ class MessageHandler {
 
   async sendWelcomeMessage(to, messageId, senderInfo) {
     const name = this.getSenderName(senderInfo)
-    const welcomeMessage = `Hola ${name}, Bienvenido a Thomas&Sweets, Tu tienda de dulces sensaciones en línea. ¿Que quieres probar hoy?`
+    const firstName = name.split(' ')[0]
+    const welcomeMessage = `🎉🍰 ¡Hola ${firstName}! Bienvenido a Thomas&Sweets 🎂✨, tu rincón de dulzura en línea. 😋💖 ¿Qué delicia puedo preparar para ti hoy? 🍫🍪`
     await whatsappService.sendMessage(to, welcomeMessage, messageId)
   }
 }
