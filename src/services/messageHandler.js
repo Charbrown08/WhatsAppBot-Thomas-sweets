@@ -142,6 +142,47 @@ class MessageHandler {
     await whatsappService.sendMediaMessage(to, type, mediaUrl, caption)
   }
 
+  completeReservation(to) {
+    const reservation = this.reservationState[to]
+    delete this.reservationState[to]
+
+    const clientData = [
+      reservation.nombre,
+      reservation.thCelular,
+      reservation.thFecha,
+      reservation.thDireccion,
+      reservation.thTamano,
+      reservation.thCantidad,
+      reservation.thSabor,
+      reservation.thMotivo,
+      reservation.thHora,
+      reservation.thPago,
+      new Date().toISOString(),
+    ]
+
+    console.log('client data:', clientData)
+
+    return `🎉 ¡Tu pedido está confirmado, para ${reservation.nombre}! 🎉
+    
+    Gracias por confiar en Thomas&Sweets para endulzar este momento tan especial. 🥰 Aquí tienes el resumen de tu pedido:
+    
+    📦 **Resumen del Pedido**
+    - 🎂 **Sabor**: ${reservation.thSabor}
+    - 🎉 **Motivo**: ${reservation.thMotivo}
+    - 📏 **Tamaño**: ${reservation.thTamano}
+    - 🔢 **Cantidad**: ${reservation.thCantidad}
+    - 📅 **Fecha de entrega**: ${reservation.thFecha}
+    - ⏰ **Hora de entrega**: ${reservation.thHora}
+    - 💳 **Método de pago**: ${reservation.thPago}
+    
+    Nos aseguraremos de que todo esté perfecto para tu entrega en **${reservation.thDireccion}**.
+    
+    💖 ¡Prepárate para disfrutar de una experiencia deliciosa que recordarán por siempre!
+    
+    - Con cariño, el equipo de Thomas&Sweets 🍰✨
+    `
+  }
+
   async handlerReservationFlow(to, message) {
     const state = this.reservationState[to]
     let response
@@ -206,8 +247,7 @@ class MessageHandler {
 
       case 'thPago':
         state.thPago = message
-        response =
-          '¡Gracias por tu pedido! 🎂 Thomas&Sweets lo tendrá listo muy pronto. 💖'
+        response = this.completeReservation(to)
         break
     }
 
