@@ -30,6 +30,17 @@ class MessageHandler {
     const welcomeMessage = `🎉🍰 ¡Hola ${firstName}! Bienvenido a Thomas&Sweets 🎂✨, tu rincón de dulzura en línea. 😋💖 ¿Qué delicia puedo preparar para ti hoy? 🍫🍪`
     await whatsappService.sendMessage(to, welcomeMessage, messageId)
   }
+
+  async sendWelcomeMenu(to) {
+    const menuMessage = 'Elige una opcion'
+    const buttons = [
+      { type: 'reply', reply: { id: 'option_1', title: 'Reservar' } },
+      { type: 'reply', reply: { id: 'option_2', title: 'Ver Catalogo' } },
+      { type: 'reply', reply: { id: 'option_3', title: 'Consultar' } },
+    ]
+
+    await whatsappService.sendInteractiveButtons(to, menuMessage, buttons)
+  }
 }
 
 export default new MessageHandler()
